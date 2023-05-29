@@ -21,6 +21,7 @@ from moviepy.video.io.VideoFileClip import VideoFileClip
 
 def convertAyatToVideo(jsonData, name, surah, ayat):
     screensize = (980, 1860)
+    clipSec = 4
     clip = VideoFileClip("back.mp4", audio=False)
     mainAudio = AudioFileClip("back_mp3.mp3")
 
@@ -28,7 +29,7 @@ def convertAyatToVideo(jsonData, name, surah, ayat):
 
     audio = AudioFileClip(jsonData["mp3"])
     audio1 = audio.set_start(0)
-    videoDuration = audio.duration + (len(jsonData["childs"]) * 6) + 1
+    videoDuration = audio.duration + (len(jsonData["childs"]) * clipSec) + 1
 
     clip1 = vfx.loop(clip, duration=videoDuration)
     mainAudio1 = vfx.loop(mainAudio, duration=videoDuration)
@@ -62,9 +63,9 @@ def convertAyatToVideo(jsonData, name, surah, ayat):
     img1 = imageio.imread(imgdata1)
 
     txt_clip = ImageClip(img1).set_duration(audio.duration + 1).set_start(0)
-    txt_clip_new = vfx.fadein(txt_clip, 1)
-    txt_clip_new = vfx.fadeout(txt_clip, 0.5)
-    clipArray.append(txt_clip_new)
+    txt_clip = vfx.fadein(txt_clip, 1)
+    txt_clip = vfx.fadeout(txt_clip, 0.5)
+    clipArray.append(txt_clip)
 
     wordBword = jsonData["childs"]
     i = 0
@@ -74,14 +75,14 @@ def convertAyatToVideo(jsonData, name, surah, ayat):
         if i == 0:
             time = audio.duration + 1
         else:
-            time = audio.duration + (i * 6)
+            time = audio.duration + (i * clipSec)
 
         child_imgdata1 = base64.b64decode(wordBword[i]["ar_img"])
         child_img1 = imageio.imread(child_imgdata1)
-        child_clip1 = ImageClip(child_img1).set_duration(5).set_start(time)
-        child_clip1_new = vfx.fadein(child_clip1, 1)
-        child_clip1_new = vfx.fadeout(child_clip1, 0.5)
-        clipArray.append(child_clip1_new)
+        child_clip1 = ImageClip(child_img1).set_duration(clipSec).set_start(time)
+        child_clip1 = vfx.fadein(child_clip1, 0.5)
+        child_clip1 = vfx.fadeout(child_clip1, 0.5)
+        clipArray.append(child_clip1)
 
         child_audio = AudioFileClip(wordBword[i]["mp3"])
         child_audio1 = child_audio.set_start(time)
@@ -98,28 +99,28 @@ def convertAyatToVideo(jsonData, name, surah, ayat):
 
 
 def makeVideo():
-    surah = 1
-    f = open("001.json", encoding="utf-8")
+    surah = 2
+    f = open("002.json", encoding="utf-8")
     data = json.load(f)
     # print(data)
     f.close()
     jsonData = data
-    i = 0
-    while i < 7:
+    i = 3
+    while i < 4:
         print(jsonData[i]["mp3"])
         name = '00' + str(surah) + '_00' + str(surah) + '00' + str(i + 1) + '.mp4'
         convertAyatToVideo(jsonData[i], name, str(surah), str(i + 1))
         i += 1
 
 
-def loopFile():
+'''def loopFile():
     surah = 2
-    i = 1
+    i = 3
     while i < 1:
         url = '00' + str(surah) + '/' + 'Surah_00' + str(surah) + '00' + str(i) + '.json'
         name = '00' + str(surah) + '_00' + str(surah) + '00' + str(i) + '.mp4'
         makeVideo()
-        i += 1
+        i += 1'''
 
 
 makeVideo()
