@@ -25,13 +25,13 @@ def convertAyatToVideo(jsonData, name, surah, ayat):
     clip = VideoFileClip("back.mp4", audio=False)
     mainAudio = AudioFileClip("back_mp3.mp3")
 
-    # clip_resized = clip.fx(vfx.resize, width=1080, height=1920)
+    clip_resized = clip.fx(vfx.resize, width=1080, height=1920)
 
     audio = AudioFileClip(jsonData["mp3"])
     audio1 = audio.set_start(0)
     videoDuration = audio.duration + (len(jsonData["childs"]) * clipSec) + 1
 
-    clip1 = vfx.loop(clip, duration=videoDuration)
+    clip1 = vfx.loop(clip_resized, duration=videoDuration)
     mainAudio1 = vfx.loop(mainAudio, duration=videoDuration)
     mainAudio1 = mainAudio1.fx(volumex, 0.4)
 
@@ -62,15 +62,16 @@ def convertAyatToVideo(jsonData, name, surah, ayat):
     imgdata1 = base64.b64decode(jsonData["arabic_img"])
     img1 = imageio.imread(imgdata1)
 
-    txt_clip = ImageClip(img1).set_duration(audio.duration + 1).set_start(0)
+    txt_clip = ImageClip(img1).set_position(("center", "top")).set_duration(audio.duration + 1).set_start(0)
     txt_clip = vfx.fadein(txt_clip, 1)
     txt_clip = vfx.fadeout(txt_clip, 0.5)
     clipArray.append(txt_clip)
 
     wordBword = jsonData["childs"]
     i = 0
+    print(len(wordBword))
     while i < len(wordBword):
-        print(wordBword[i])
+
         time = 0
         if i == 0:
             time = audio.duration + 1
@@ -100,16 +101,18 @@ def convertAyatToVideo(jsonData, name, surah, ayat):
 
 def makeVideo():
     surah = 2
-    f = open("002.json", encoding="utf-8")
+    startFrom = 21
+    f = open("002_"+str(startFrom)+"-"+str(startFrom+9)+".json", encoding="utf-8")
     data = json.load(f)
     # print(data)
     f.close()
     jsonData = data
-    i = 3
-    while i < 4:
+
+    i = 0
+    while i < len(jsonData):
         print(jsonData[i]["mp3"])
-        name = '00' + str(surah) + '_00' + str(surah) + '00' + str(i + 1) + '.mp4'
-        convertAyatToVideo(jsonData[i], name, str(surah), str(i + 1))
+        name = '00' + str(surah) + '_00' + str(surah) + '00' + str(i + startFrom) + '.mp4'
+        convertAyatToVideo(jsonData[i], name, str(surah), str(i + startFrom))
         i += 1
 
 
