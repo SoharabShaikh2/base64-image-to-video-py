@@ -101,7 +101,7 @@ def convertAyatToVideo(jsonData, name, surah, ayat):
 
 def makeVideo():
     surah = 2
-    startFrom = 16
+    startFrom = 36
     f = open("00"+str(surah)+"_"+str(startFrom)+"-"+str(startFrom+4)+".json", encoding="utf-8")
     data = json.load(f)
     # print(data)
